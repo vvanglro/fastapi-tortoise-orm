@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # @Time    : 2021/4/25 16:01
 # @Author  : wanghao
-# @File    : 上传文件.py
+# @File    : UploadFile上传文件.py
 # @Software: PyCharm
 import time
 import aiofiles
