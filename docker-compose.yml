@@ -1,0 +1,9 @@
+version: "3.8"
+services:
+  api:
+    build: .
+    container_name: fastapi-tutorial
+    ports:
+      - 8000:80
+    volumes:
+      - ../fastapi-main:/fastapi-main
