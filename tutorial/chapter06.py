@@ -150,12 +150,14 @@ def get_password_hash(password):
     return pwd_context.hash(password)
 
 def jwt_get_user(db, username: str):
+    # 模拟对数据库的操作
     if username in db:
         user_dict = db[username]
         return UserInDB(**user_dict)
 
 
 def jwt_authenticate_user(db, username: str, password: str):
+    # 验证用户信息
     user = jwt_get_user(db=db, username=username)
     if not user:
         return False
@@ -166,10 +168,12 @@ def jwt_authenticate_user(db, username: str, password: str):
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     to_encode = data.copy()
+    # 如果传入了过期时间则根据当前时间往前推
     if expires_delta:
-        expire = datetime.utcnow() + expires_delta
+        expire = datetime.now() + expires_delta
     else:
-        expire = datetime.utcnow() + timedelta(minutes=15)
+        # 没传则默认15分钟
+        expire = datetime.now() + timedelta(minutes=15)
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(claims=to_encode, key=SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
@@ -177,6 +181,7 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
 
 @app06.post("/jwt/token", response_model=Token)
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
+    # 验证用户信息 返回user
     user = jwt_authenticate_user(db=fake_users_db, username=form_data.username, password=form_data.password)
     if not user:
         raise HTTPException(
@@ -184,7 +189,9 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
             detail="Incorrect username or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
+    # 将全局定义的过期时间ACCESS_TOKEN_EXPIRE_MINUTES传入并转换为时间格式
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    # 调用上边定义的token方法生成token
     access_token = create_access_token(
         data={"sub": user.username}, expires_delta=access_token_expires
     )
@@ -198,6 +205,7 @@ async def jwt_get_current_user(token: str = Depends(oauth2_schema)):
         headers={"WWW-Authenticate": "Bearer"},
     )
     try:
+        # 验证传入的token
         payload = jwt.decode(token=token, key=SECRET_KEY, algorithms=[ALGORITHM])
         username = payload.get("sub")
         if username is None:
