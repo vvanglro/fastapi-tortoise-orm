@@ -90,6 +90,7 @@ class CityInfo(BaseModel):
     country_population: int = Field(default=800, title='人口数量', description='国家的人口数量', ge=800)
 
     class Config:
+        # 数据格式的例子
         schema_extra = {
             "example": {
                 "name": "Chengdu",
