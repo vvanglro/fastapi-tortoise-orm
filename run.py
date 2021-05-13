@@ -56,6 +56,7 @@ app.include_router(app03, prefix='/chapter03', tags=['第三章 请求参数和�
 app.include_router(app04, prefix='/chapter04', tags=['第四章 响应处理和FastAPI配置'])
 app.include_router(app05, prefix='/chapter05', tags=['第五章 FastAPI的依赖注入系统'])
 app.include_router(app06, prefix='/chapter06', tags=['第六章 安全、认证和授权'])
+app.include_router(app07, prefix='/chapter07', tags=['第七章 FastAPI的数据库操作和多应用的目录结构设计'])
 
 
 # 定义异常方法
