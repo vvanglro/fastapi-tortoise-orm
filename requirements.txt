@@ -29,6 +29,7 @@ pyparsing==2.4.7
 pytest==6.2.1
 python-jose==3.2.0
 python-multipart==0.0.5
+pymysql
 requests==2.25.1
 rsa==4.6
 six==1.15.0
