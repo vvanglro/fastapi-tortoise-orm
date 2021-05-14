@@ -4,11 +4,16 @@
 @file:pydantic使用方法.py
 @time:2021/04/23
 """
-from datetime import datetime
+from datetime import datetime, date
 from pathlib import Path
-from typing import List, Optional
+from typing import List
+from typing import Optional
 
 from pydantic import BaseModel, ValidationError
+from pydantic import constr
+from sqlalchemy import Column, Integer, String
+from sqlalchemy.dialects.postgresql import ARRAY
+from sqlalchemy.ext.declarative import declarative_base
 
 """
 Data validation and settings management using python type annotations.
@@ -77,3 +82,54 @@ print(User.construct(**user_data))
 
 # 定义模型类的时候, 所有字段都注明类型，字段顺序就不会乱
 print(User.__fields__.keys())  # 输出模型类中所有的字段
+
+
+print("\033[31m4. --- 递归模型 ---\033[0m")
+
+
+class Sound(BaseModel):
+    sound: str
+
+
+class Dog(BaseModel):
+    birthday: date
+    weight: float = Optional[None]
+    sound: List[Sound]  # 不同的狗有不同的叫声。递归模型（Recursive Models）就是指一个嵌套一个
+
+
+dogs = Dog(birthday=date.today(), weight=6.66, sound=[{"sound": "wang wang ~"}, {"sound": "ying ying ~"}])
+print(dogs.dict())
+
+print("\033[31m5. --- ORM模型：从类实例创建符合ORM对象的模型  ---\033[0m")
+
+Base = declarative_base()
+
+
+class CompanyOrm(Base):
+    __tablename__ = 'companies'
+    id = Column(Integer, primary_key=True, nullable=False)
+    public_key = Column(String(20), index=True, nullable=False, unique=True)
+    name = Column(String(63), unique=True)
+    domains = Column(ARRAY(String(255)))
+
+
+class CompanyModel(BaseModel):
+    id: int
+    public_key: constr(max_length=20)
+    name: constr(max_length=63)
+    domains: List[constr(max_length=255)]
+
+    class Config:
+        orm_mode = True
+
+
+co_orm = CompanyOrm(
+    id=123,
+    public_key='foobar',
+    name='Testing',
+    domains=['example.com', 'foobar.com'],
+)
+
+print(CompanyModel.from_orm(co_orm))
+
+print("\033[31m6. --- Pydantic支撑的字段类型  ---\033[0m")  # 官方文档：https://pydantic-docs.helpmanual.io/usage/types/
