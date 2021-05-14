@@ -115,11 +115,13 @@ class CompanyOrm(Base):
 
 class CompanyModel(BaseModel):
     id: int
+    # pydantic的constr限制字段长度
     public_key: constr(max_length=20)
     name: constr(max_length=63)
     domains: List[constr(max_length=255)]
 
     class Config:
+        # 表示将pydantic模型类与orm模型类关联起来
         orm_mode = True
 
 
