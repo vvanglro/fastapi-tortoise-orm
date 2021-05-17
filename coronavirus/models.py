@@ -28,6 +28,11 @@ class City(Base):
     def __repr__(self):
         return f'{self.country}_{self.province}'
 
+'''
+default 和 server_default的 坑  默认值是sqlalchemy自动在内部添加进去表中的 所以生成表中的时候 表结构没有默认值
+https://zhuanlan.zhihu.com/p/37892676
+'''
+
 class Data(Base):
     __tablename__ = 'data'  # 表名
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
