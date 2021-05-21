@@ -36,7 +36,7 @@ https://zhuanlan.zhihu.com/p/37892676
 class Data(Base):
     __tablename__ = 'data'  # 表名
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    city_id = Column(Integer, ForeignKey('city.id'), comment='所属省/直辖市') # ForeignKey里的字符串格式不是类名.属性名，而是表名.字段名
+    city_id = Column(Integer, ForeignKey('city.id', ondelete='CASCADE'), comment='所属省/直辖市') # ForeignKey里的字符串格式不是类名.属性名，而是表名.字段名
     date = Column(Date, nullable=False, comment='数据日期')
     confirmed = Column(BigInteger, default=0, nullable=False, comment='确诊数量')
     deaths = Column(BigInteger, default=0, nullable=False, comment='死亡数量')
