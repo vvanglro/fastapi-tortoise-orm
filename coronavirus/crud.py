@@ -45,7 +45,7 @@ def get_data(db: Session, city: str = None, skip: int = 0, limit: int = 10):
         # 外键关联查询
         # models.Data.city.has(province=city)  从Data模型里relationship关联的City模型
         # 使用has筛选关联的City模型中的条件 https://www.osgeo.cn/sqlalchemy/orm/internals.html?highlight=has#sqlalchemy.orm.RelationshipProperty.Comparator.has
-        return db.query(models.Data).filter(models.Data.city.has(province=city)).first()
+        return db.query(models.Data).filter(models.Data.city.has(province=city)).limit(5)
     return db.query(models.Data).offset(skip).limit(limit).all()
 
 
