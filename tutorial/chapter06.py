@@ -34,9 +34,9 @@ async def oauth2_password_bearer(token: str = Depends(oauth2_schema)):
 """基于 Password 和 Bearer token 的 OAuth2 认证"""
 
 fake_users_db = {
-    "john snow": {
-        "username": "john snow",
-        "full_name": "John Snow",
+    "Hulk": {
+        "username": "hulk",
+        "full_name": "Hulk",
         "email": "johnsnow@example.com",
         "hashed_password": "fakehashedsecret",
         "disabled": False,
@@ -120,7 +120,7 @@ fake_users_db.update({
         "email": "johnsnow@example.com",
 
         # 这里的hashed_password 使用下面的pwd_context.hash(secret='你的密码') 生成
-        "hashed_password": "$2b$12$xX8y2PIRqRP1NbXWGxxUOuLVvcPCDEobk7XnDFGbB2Ww9z0kxx7oG",
+        "hashed_password": "$2b$12$xX8y2PIRqRP1NbXWGxxUOuLVvcPCDEobk7XnDFGbB2Ww9z0kxx7oG",  # secret
         "disabled": False,
     }
 })
