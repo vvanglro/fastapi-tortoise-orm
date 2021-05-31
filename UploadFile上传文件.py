@@ -3,6 +3,7 @@
 # @Author  : wanghao
 # @File    : UploadFile上传文件.py
 # @Software: PyCharm
+import os
 import time
 import aiofiles
 from typing import  List
@@ -17,6 +18,8 @@ app = FastAPI()
 @app.post("/uploadfiles/")
 async def create_upload_files(files: List[UploadFile] = File(...)):
     st = time.time()
+    if not os.path.exists('./files'):
+        os.mkdir('./files')
     try:
         for file in files:
             async with aiofiles.open(f'./files/{file.filename}','wb') as w:
