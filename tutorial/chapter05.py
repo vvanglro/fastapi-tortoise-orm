@@ -93,6 +93,24 @@ async def depandency_in_path_operation():
     return [{"user": "user01"}, {"user": "user02"}]
 
 
+class FixedContentQueryChecker:
+    def __init__(self, fixed_content: str):
+        self.fixed_content = fixed_content
+
+    def __call__(self, q: str = ""):
+        if q:
+            return self.fixed_content in q
+        return False
+
+
+checker = FixedContentQueryChecker("bar")
+
+
+@app05.get("/query-checker/")
+async def read_query_check(fixed_content_included: bool = Depends(checker)):
+    return {"fixed_content_in_query": fixed_content_included}
+
+
 '''Global Dependencies 全局依赖'''
 
  # 对于app05这个路由下的接口都进行依赖的验证  例如可以验证token 等
