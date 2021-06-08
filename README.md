@@ -1,10 +1,11 @@
 官网文档:https://fastapi.tiangolo.com/zh/                                          
 出自：BV1iN411X72b   
-简单部署：1. mysql默认容器ip:3306端口 账号密码为:root/hulk       
-         2. !建议docker-compose build前先创建./compose/mysql/data空文件夹   
-         3. docker-compose build       
-         4. docker-compose up -d       
-         5. http://ip:7777/coronavirus/         
+### 部署：
+1. mysql默认容器ip:3306端口 账号密码为:root/hulk       
+2. !建议docker-compose build前先创建./compose/mysql/data空文件夹   
+3. docker-compose build       
+4. docker-compose up -d       
+5. http://ip:7777/coronavirus/         
 
 ## FastAPI 框架精讲
 > 整体的介绍 FastAPI，快速上手开发，结合 API 交互文档逐个讲解核心模块的使用
