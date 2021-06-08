@@ -10,8 +10,8 @@ from sqlalchemy.orm import sessionmaker
 
 # SQLALCHEMY_DATABASE_URL = 'sqlite:///./coronavirus.sqlite3'
 # SQLALCHEMY_DATABASE_URL = 'mysql+pymysql://username:password@host:port/database_name'  # mysql或者postgresql的连接方法
-SQLALCHEMY_DATABASE_URL = 'mysql+pymysql://root:123456@127.0.0.1/coronavirus'  # mysql或者postgresql的连接方法
 
+SQLALCHEMY_DATABASE_URL = 'mysql+pymysql://hulk:hulk@db:3306/coronavirus'  # mysql或者postgresql的连接方法
 
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL, encoding='utf-8',
