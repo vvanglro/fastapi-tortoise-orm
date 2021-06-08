@@ -2,7 +2,7 @@
 出自：BV1iN411X72b   
 ### 部署：
 1. mysql默认容器ip:3306端口 账号密码为:root/hulk       
-2. !建议docker-compose build前先创建./compose/mysql/data空文件夹   
+2. !建议docker-compose build前先创建./compose/mysql/data空文件夹(如果后续报错文件记得权限chmod 777 -R 文件名)   
 3. docker-compose build       
 4. docker-compose up -d       
 5. http://ip:7777/coronavirus/         
