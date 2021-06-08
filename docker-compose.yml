@@ -1,9 +1,37 @@
 version: "3.8"
+
+networks:
+  db_network:
+    driver: bridge
+
 services:
-  api:
-    build: .
-    container_name: fastapi-tutorial
-    ports:
-      - 8000:80
+  db:
+    image: mysql:5.7
+    env_file:
+      - ./.env  #使用了环境变量
+    networks:
+      - db_network
     volumes:
-      - ../fastapi-main:/fastapi-main
+      - ./compose/mysql/data:/var/lib/mysql:rw  # 挂载数据库数据, 可读可写
+      - ./compose/mysql/conf/my.cnf:/etc/mysql/my.cnf # 挂载配置文件
+      - ./compose/mysql/init:/docker-entrypoint-initdb.d/ # 挂载数据初始化sql脚本
+    ports:
+      - "3306:3306"  # 与配置文件保持一致
+    restart: always
+    tty: true    # 防止docker-compose生成的容器执行脚本命令后立刻退出  如果不加这俩参数 在docker-compose build后直接docker-compose up -d时database.py里识别不了db 如果build后先up 在up -d则可以不加这俩参数也行
+    stdin_open: true  # 防止docker-compose生成的容器执行脚本命令后立刻退出
+
+  web:
+    build: .
+    command: "uvicorn run:app --host 0.0.0.0 --port 80 --workers 5"
+    ports:
+      - "7777:80"
+    volumes:
+      - .:/workspace # 挂载项目代码
+    networks:
+      - db_network
+    depends_on:
+      - db
+    restart: always
+    tty: true
+    stdin_open: true
