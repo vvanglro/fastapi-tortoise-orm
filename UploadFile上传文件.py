@@ -39,4 +39,4 @@ async def create_upload_files(files: List[UploadFile] = File(...)):
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run(app='app3:app', host="0.0.0.0", port=8001, reload=True)
+    uvicorn.run(app='UploadFile上传文件:app', host="0.0.0.0", port=8001, reload=True)
