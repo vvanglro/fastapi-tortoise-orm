@@ -34,7 +34,7 @@ engine = create_engine(
     max_overflow=5,
     # 将连接这个数据库引擎的所有执行语句打印出来
     # echo=True表示引擎将用repr()函数记录所有语句及其参数列表到日志
-    echo=True
+    echo=False
 )
 
 

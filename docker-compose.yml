@@ -6,7 +6,7 @@ networks:
 
 services:
   db:
-    image: mysql:5.7
+    image: mariadb
     env_file:
       - ./.env  #使用了环境变量
     networks:
