@@ -1,5 +1,6 @@
 官网文档:https://fastapi.tiangolo.com/zh/                                          
-出自：BV1iN411X72b   
+出自：BV1iN411X72b  
+#### 分支 feat/async_db 改用tortoise-orm
 ### 部署：
 1. mysql默认容器ip:3306端口 账号密码为:root/hulk       
 2. !建议docker-compose build前先创建./compose/mysql/data空文件夹(如果后续报错文件记得权限chmod 777 -R 文件名)   
