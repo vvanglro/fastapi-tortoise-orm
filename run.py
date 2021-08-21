@@ -11,8 +11,10 @@ from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
+from tortoise.contrib.fastapi import register_tortoise
 
 from coronavirus import application
+from coronavirus.database import DATABASE_URL
 from tutorial import app03, app04, app05, app06, app07, app08
 
 from fastapi.exceptions import RequestValidationError
@@ -124,5 +126,15 @@ async def unicorn_exception_handler(request: Request, exc: NormalException):
 #     # print(f"OMG! The client sent invalid data!: {exc}")
 #     return await request_validation_exception_handler(request, exc)
 
+register_tortoise(
+    app,
+    db_url=DATABASE_URL,
+    modules={"models": ["coronavirus.models"]},
+    generate_schemas=False,
+    add_exception_handlers=True,
+)
+
+
+
 if __name__ == '__main__':
-    uvicorn.run('run:app', host='0.0.0.0', port=9090, reload=True, debug=True, workers=1)
+    uvicorn.run('run:app', host='0.0.0.0', port=9091, reload=True, debug=True, workers=5)
