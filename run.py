@@ -128,21 +128,34 @@ async def unicorn_exception_handler(request: Request, exc: NormalException):
 #     # print(f"OMG! The client sent invalid data!: {exc}")
 #     return await request_validation_exception_handler(request, exc)
 
-@app.on_event("startup")
-async def init_orm() -> None:  # pylint: disable=W0612
-    await Tortoise.init(db_url=DATABASE_URL, modules={"models": ["coronavirus.models"]},timezone="Asia/Shanghai")
+# @app.on_event("startup")
+# async def init_orm() -> None:  # pylint: disable=W0612
+#     await Tortoise.init(db_url=DATABASE_URL, modules={"models": ["coronavirus.models"]}, timezone="Asia/Shanghai")
+#
+#
+# @app.on_event("shutdown")
+# async def close_orm() -> None:  # pylint: disable=W0612
+#     await Tortoise.close_connections()
 
-@app.on_event("shutdown")
-async def close_orm() -> None:  # pylint: disable=W0612
-    await Tortoise.close_connections()
 
-# register_tortoise(
-#     app,
-#     db_url=DATABASE_URL,
-#     modules={"models": ["coronavirus.models"]},
-#     generate_schemas=False,
-#     add_exception_handlers=True,
-# )
+register_tortoise(
+    app,
+    config={
+        'connections': {
+            'default': DATABASE_URL
+        },
+        "apps": {
+            "models": {
+                "models": ["coronavirus.models"],
+                "default_connection": "default",
+            }
+        },
+        'use_tz': False,
+        'timezone': 'Asia/Shanghai'
+    },
+    generate_schemas=False,
+    add_exception_handlers=True,
+)
 
 if __name__ == '__main__':
     uvicorn.run('run:app', host='0.0.0.0', port=9091, reload=True, debug=True, workers=5)
