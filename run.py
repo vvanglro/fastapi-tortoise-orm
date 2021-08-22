@@ -11,6 +11,7 @@ from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
+from tortoise import Tortoise
 from tortoise.contrib.fastapi import register_tortoise
 
 from coronavirus import application
@@ -38,6 +39,7 @@ app = FastAPI(
 # .mount()不要在分路由APIRouter().mount()调用，模板会报错
 app.mount(path='/coronavirus/static', app=StaticFiles(directory='./coronavirus/static'), name='static')
 
+
 # @app.exception_handler(StarletteHTTPException)  # 重写HTTPException异常处理器
 # async def http_exception_handler(request, exc):
 #     '''
@@ -63,7 +65,7 @@ app.mount(path='/coronavirus/static', app=StaticFiles(directory='./coronavirus/s
 
 # 中间件
 @app.middleware('http')
-async def add_process_time_header(request: Request, call_next): # call_next将接收request请求作为参数
+async def add_process_time_header(request: Request, call_next):  # call_next将接收request请求作为参数
     # 计算每个请求的响应时间
     start_time = time.time()
     # 处理每个请求
@@ -71,6 +73,7 @@ async def add_process_time_header(request: Request, call_next): # call_next将�
     process_time = time.time() - start_time
     response.headers['X-Process-Time'] = str(process_time)  # 添加自定义的以"X-"开头的请求头
     return response
+
 
 app.add_middleware(
     CORSMiddleware,
@@ -80,13 +83,12 @@ app.add_middleware(
         'http://127.0.0.1:8080',
     ],
     # 允许使用证书
-    allow_credentials= True,
+    allow_credentials=True,
     # 允许跨域的请求方法
-    allow_methods = ["*"],
+    allow_methods=["*"],
     # 设置允许跨域的headers
-    allow_headers = ["*"],
+    allow_headers=["*"],
 )
-
 
 app.include_router(app03, prefix='/chapter03', tags=['第三章 请求参数和验证'])
 app.include_router(app04, prefix='/chapter04', tags=['第四章 响应处理和FastAPI配置'])
@@ -126,15 +128,21 @@ async def unicorn_exception_handler(request: Request, exc: NormalException):
 #     # print(f"OMG! The client sent invalid data!: {exc}")
 #     return await request_validation_exception_handler(request, exc)
 
-register_tortoise(
-    app,
-    db_url=DATABASE_URL,
-    modules={"models": ["coronavirus.models"]},
-    generate_schemas=False,
-    add_exception_handlers=True,
-)
+@app.on_event("startup")
+async def init_orm() -> None:  # pylint: disable=W0612
+    await Tortoise.init(db_url=DATABASE_URL, modules={"models": ["coronavirus.models"]},timezone="Asia/Shanghai")
 
+@app.on_event("shutdown")
+async def close_orm() -> None:  # pylint: disable=W0612
+    await Tortoise.close_connections()
 
+# register_tortoise(
+#     app,
+#     db_url=DATABASE_URL,
+#     modules={"models": ["coronavirus.models"]},
+#     generate_schemas=False,
+#     add_exception_handlers=True,
+# )
 
 if __name__ == '__main__':
     uvicorn.run('run:app', host='0.0.0.0', port=9091, reload=True, debug=True, workers=5)
