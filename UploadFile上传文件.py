@@ -14,7 +14,7 @@ from fastapi import FastAPI, UploadFile, File
 app = FastAPI()
 
 
-
+# 限制上传文件大小方案:https://github.com/tiangolo/fastapi/issues/362
 @app.post("/uploadfiles/")
 async def create_upload_files(files: List[UploadFile] = File(...)):
     st = time.time()
