@@ -15,6 +15,7 @@ from tortoise import Tortoise
 from tortoise.contrib.fastapi import register_tortoise
 
 from coronavirus import application
+from coronavirus.config import DEBUG
 from coronavirus.database import DATABASE_URL
 from tutorial import app03, app04, app05, app06, app07, app08
 
@@ -22,45 +23,20 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import PlainTextResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
-app = FastAPI(
-    docs_url="/docs",
-    redoc_url="/redocs",
-    title="FastAPI (Python)",
-    description="FastAPI Framework, high performance, <br>"
-                "easy to learn, fast to code, ready for production",
-    version="1.0",
-    openapi_url="/openapi.json",
-
-    # 全局路由使用依赖验证
-    # dependencies=[Depends(verify_token), Depends(verify_key)]
-)
+app_kwargs = {
+    "title": "FastAPI (Python)",
+    "debug": DEBUG,
+    "version": "1.0",
+    "description": "FastAPI Framework, high performance, <br>"
+                   "easy to learn, fast to code, ready for production",
+}
+if not DEBUG:
+    app_kwargs.update({"redoc_url": None, "docs_url": None, "openapi_url": None})
+app = FastAPI(**app_kwargs)
 
 # mount表示将某个目录下一个完全独立的应用挂载过来，这个不会在API交互文档中显示
 # .mount()不要在分路由APIRouter().mount()调用，模板会报错
 app.mount(path='/coronavirus/static', app=StaticFiles(directory='./coronavirus/static'), name='static')
-
-
-# @app.exception_handler(StarletteHTTPException)  # 重写HTTPException异常处理器
-# async def http_exception_handler(request, exc):
-#     '''
-#     :param request: 这个参数不能省
-#     :param exc:
-#     :return:
-#     '''
-#     return PlainTextResponse(str(exc.detail), status_code=exc.status_code)
-#
-# @app.exception_handler(RequestValidationError)  # 重写请求验证异常处理器
-# async def validation_exception_handler(request, exc):
-#     '''
-#     :param request:  这个参数不能省
-#     :param exc:
-#     :return:
-#     '''
-#     return PlainTextResponse(str(exc), status_code=400)
-
-
-# 注册捕获异常
-# register_exception(app)
 
 
 # 中间件
@@ -79,8 +55,7 @@ app.add_middleware(
     CORSMiddleware,
     #  允许跨域的列表
     allow_origins=[
-        'http://127.0.0.1',
-        'http://127.0.0.1:8080',
+        "*"
     ],
     # 允许使用证书
     allow_credentials=True,
@@ -90,13 +65,17 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(app03, prefix='/chapter03', tags=['第三章 请求参数和验证'])
-app.include_router(app04, prefix='/chapter04', tags=['第四章 响应处理和FastAPI配置'])
-app.include_router(app05, prefix='/chapter05', tags=['第五章 FastAPI的依赖注入系统'])
-app.include_router(app06, prefix='/chapter06', tags=['第六章 安全、认证和授权'])
-app.include_router(app07, prefix='/chapter07', tags=['第七章 FastAPI的数据库操作和多应用的目录结构设计'])
-app.include_router(app08, prefix='/chapter08', tags=['第八章 中间件、CORS、后台任务、测试用例'])
-app.include_router(application, prefix='/coronavirus', tags=['新冠病毒疫情跟踪器API'])
+if not DEBUG:
+    app.include_router(application, prefix='/coronavirus', tags=['新冠病毒疫情跟踪器API'])
+else:
+    app.include_router(app03, prefix='/chapter03', tags=['第三章 请求参数和验证'])
+    app.include_router(app04, prefix='/chapter04', tags=['第四章 响应处理和FastAPI配置'])
+    app.include_router(app05, prefix='/chapter05', tags=['第五章 FastAPI的依赖注入系统'])
+    app.include_router(app06, prefix='/chapter06', tags=['第六章 安全、认证和授权'])
+    app.include_router(app07, prefix='/chapter07', tags=['第七章 FastAPI的数据库操作和多应用的目录结构设计'])
+    app.include_router(app08, prefix='/chapter08', tags=['第八章 中间件、CORS、后台任务、测试用例'])
+    app.include_router(application, prefix='/coronavirus', tags=['新冠病毒疫情跟踪器API'])
+
 
 
 # 定义异常方法

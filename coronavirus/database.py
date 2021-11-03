@@ -3,8 +3,9 @@
 # @Author  : wanghao
 # @File    : database.py
 # @Software: PyCharm
+from coronavirus.config import DB_USER, DB_PASSWORD, DB_NAME
 
-DATABASE_URL = 'mysql://root:hulk@localhost:3306/async_coronavirus?charset=utf8'
+DATABASE_URL = f'mysql://{DB_USER}:{DB_PASSWORD}@db:3306/{DB_NAME}?charset=utf8'
 
 TORTOISE_ORM = {
     "connections": {"default": DATABASE_URL},

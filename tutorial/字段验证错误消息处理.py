@@ -27,13 +27,6 @@ async def handler_server_error(request: Request, exc):
     )
 
 
-
-@app.get('/b')
-async def func(request: Request,q:int,f:int):
-    # print(request.client)
-    return q
-
-
 if __name__ == "__main__":
     import uvicorn
 

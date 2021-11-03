@@ -6,15 +6,13 @@ networks:
 
 services:
   db:
-    image: mariadb
+    image: mysql:5.7
     env_file:
       - ./.env  #使用了环境变量
     networks:
       - db_network
     volumes:
       - ./compose/mysql/data:/var/lib/mysql:rw  # 挂载数据库数据, 可读可写  !建议docker-compose build前先创建/compose/mysql/data空文件夹
-      - ./compose/mysql/conf/my.cnf:/etc/mysql/my.cnf # 挂载配置文件
-      - ./compose/mysql/init:/docker-entrypoint-initdb.d/ # 挂载数据初始化sql脚本
     ports:
       - "3306:3306"  # 与配置文件保持一致
     restart: always
@@ -23,7 +21,7 @@ services:
 
   web:
     build: .
-    command: "uvicorn run:app --host 0.0.0.0 --port 80 --workers 5"
+    command: /bin/bash -c "aerich upgrade &&  uvicorn run:app --host 0.0.0.0 --port 80 --workers 5 --log-level info"
     ports:
       - "7777:80"
     volumes:

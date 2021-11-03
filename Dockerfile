@@ -13,4 +13,3 @@ RUN ln -sf /usr/share/zoneinfo/$TZ /etc/localtime \
     && pip install -i $EXTERNAL_PYPI_SERVER --upgrade pip poetry \
     && poetry install
 ENTRYPOINT ["poetry", "run"]
-#CMD ["poetry","run","uvicorn", "run:app", "--reload","--host","0.0.0.0","--port","80"]

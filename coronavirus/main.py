@@ -3,6 +3,8 @@
 # @Author  : wanghao
 # @File    : schemas.py
 # @Software: PyCharm
+import logging
+
 import httpx
 from typing import List
 
@@ -16,7 +18,7 @@ from coronavirus.models import City, Data
 
 # 路由
 application = APIRouter()
-
+logging.basicConfig(level=logging.INFO)   # add this line
 templates = Jinja2Templates(directory='./coronavirus/templates')
 
 
@@ -113,36 +115,39 @@ async def coronavirus(request: Request, city: str = None, skip: int = 0, limit: 
 async def bg_task(url: HttpUrl):
     '''这里注意一个坑，不要在后台任务函数的参数中db：Session = Depends(get_db)这样导入依赖'''
     client = httpx.AsyncClient()
-    city_data = await client.get(url=f"{url}?source=jhu&country_code=CN&timelines=false")
-    if city_data.status_code == 200:
-        await City.all().delete() # 同步数据前先清空原有数据
-        city_locations = city_data.json()['locations']
-        for location in city_locations:
-            city = {
-                "province": location['province'],
-                "country": location['country'],
-                "country_code": "CN",
-                "country_population": location['country_population']
-            }
-            await crud.create_city(city=schemas.CreateCity(**city))
-
-    coronavirus_data = await client.get(url=f"{url}?source=jhu&country_code=CN&timelines=true")
-    if coronavirus_data.status_code == 200:
-        await Data.all().delete()  # 同步数据前先清空原有数据
-        data_locations = coronavirus_data.json()['locations']
-        for data in data_locations:
-            db_city = await crud.get_city_by_name(name=data['province'])
-            for date, confirmed in data['timelines']['confirmed']['timeline'].items():
-                db_data = {
-                    "date": date.split('T')[0],  # 把'2020-12-31T00:00:00Z' 变成 ‘2020-12-31’
-                    "confirmed": confirmed,
-                    "deaths": data['timelines']['deaths']['timeline'][date],
-                    "recovered": 0
+    try:
+        city_data = await client.get(url=f"{url}?source=jhu&country_code=CN&timelines=false")
+        if city_data.status_code == 200:
+            await City.all().delete() # 同步数据前先清空原有数据
+            city_locations = city_data.json()['locations']
+            for location in city_locations:
+                city = {
+                    "province": location['province'],
+                    "country": location['country'],
+                    "country_code": "CN",
+                    "country_population": location['country_population']
                 }
-                # 这个city_id是city表中的主键ID，不是coronavirus_data数据里的ID
-                await crud.create_city_data(data=schemas.CreateData(**db_data), city_id=db_city.id)
+                await crud.create_city(city=schemas.CreateCity(**city))
 
-    await client.aclose()
+        coronavirus_data = await client.get(url=f"{url}?source=jhu&country_code=CN&timelines=true")
+        if coronavirus_data.status_code == 200:
+            await Data.all().delete()  # 同步数据前先清空原有数据
+            data_locations = coronavirus_data.json()['locations']
+            for data in data_locations:
+                db_city = await crud.get_city_by_name(name=data['province'])
+                for date, confirmed in data['timelines']['confirmed']['timeline'].items():
+                    db_data = {
+                        "date": date.split('T')[0],  # 把'2020-12-31T00:00:00Z' 变成 ‘2020-12-31’
+                        "confirmed": confirmed,
+                        "deaths": data['timelines']['deaths']['timeline'][date],
+                        "recovered": 0
+                    }
+                    # 这个city_id是city表中的主键ID，不是coronavirus_data数据里的ID
+                    await crud.create_city_data(data=schemas.CreateData(**db_data), city_id=db_city.id)
+    except Exception:
+        logging.info("后台更新数据出错")
+    finally:
+        await client.aclose()
 
 
 @application.get('/sync_coronavirus_data/jhu')
