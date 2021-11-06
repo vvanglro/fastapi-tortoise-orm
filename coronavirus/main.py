@@ -4,6 +4,8 @@
 # @File    : schemas.py
 # @Software: PyCharm
 import logging
+import operator
+import time
 import traceback
 
 import httpx
@@ -161,7 +163,21 @@ async def bg_task():
         await client.aclose()
 
 
+users = []
+
+
 @application.get('/sync_coronavirus_data/jhu')
-async def async_coronavirus_data(background_tasks: BackgroundTasks):
-    background_tasks.add_task(bg_task,)
-    return {"message": "正在后台同步数据..."}
+async def async_coronavirus_data(request: Request, background_tasks: BackgroundTasks):
+    if not users:
+        ip = request.client.host
+        req_time = int(time.time())
+        user = {"user": ip, "time": req_time}
+        users.append(user)
+        background_tasks.add_task(bg_task, )
+        return {"message": "正在后台同步数据..."}
+    else:
+        for latest_user in users:
+            latest_user_req_time = latest_user["time"]
+            if int(time.time()) - latest_user_req_time >= 3600:
+                users.remove(latest_user)
+        return {"message": "😀请求过于频繁...请稍后在试"}

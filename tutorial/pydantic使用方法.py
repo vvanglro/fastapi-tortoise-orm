@@ -66,7 +66,7 @@ print(User.parse_obj(obj=external_date)) #解析一个对象数据
 print(User.parse_raw('{"id":"123","signup_ts":"2021-04-23 22:52","friends":[1,2,3]}'))  # 解析原始数据
 
 # 使用pathlib库写入文件
-path = Path('../data.json')
+path = Path('data.json')
 path.write_text('{"id":"123","signup_ts":"2021-04-23 22:52","friends":[1,2,3]}')
 print(User.parse_file(path)) # 解析一个文件数据
 

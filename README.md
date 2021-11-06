@@ -1,5 +1,3 @@
-官网文档:https://fastapi.tiangolo.com/zh/                                          
-出自：BV1iN411X72b   
 #### 分支 feat/async_db 改用tortoise-orm
 ### 部署：
 1. mysql默认容器ip:3306端口 账号密码为:root/hulk       
