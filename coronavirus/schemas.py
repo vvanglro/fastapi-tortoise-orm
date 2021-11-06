@@ -5,15 +5,15 @@
 # @Software: PyCharm
 
 from datetime import datetime
-from datetime import date as date_
 from pydantic import BaseModel
 
 
 class CreateData(BaseModel):
-    date:date_
+    date: datetime
     confirmed: int = 0
     deaths: int = 0
     recovered: int = 0
+    now_confirmed: int = 0
 
 
 class CreateCity(BaseModel):
@@ -32,6 +32,7 @@ class ReadData(CreateData):
     class Config:
         orm_mode = True
 
+
 class ReadCity(CreateCity):
     id: int
     created_at: datetime
@@ -39,3 +40,7 @@ class ReadCity(CreateCity):
 
     class Config:
         orm_mode = True
+
+
+class MsgResponse(BaseModel):
+    message: str

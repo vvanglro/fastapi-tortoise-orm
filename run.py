@@ -17,6 +17,7 @@ from tortoise.contrib.fastapi import register_tortoise
 from coronavirus import application
 from coronavirus.config import DEBUG
 from coronavirus.database import DATABASE_URL
+from coronavirus.schemas import MsgResponse
 from tutorial import app03, app04, app05, app06, app07, app08
 
 from fastapi.exceptions import RequestValidationError
@@ -42,6 +43,9 @@ app.mount(path='/coronavirus/static', app=StaticFiles(directory='./coronavirus/s
 # 中间件
 @app.middleware('http')
 async def add_process_time_header(request: Request, call_next):  # call_next将接收request请求作为参数
+    if request.url.path == '/coronavirus/sync_coronavirus_data/jhu':
+        ip = request.client.host
+        return JSONResponse(content={"message": "😀请求过于频繁...请稍后在试"})
     # 计算每个请求的响应时间
     start_time = time.time()
     # 处理每个请求

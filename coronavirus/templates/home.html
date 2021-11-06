@@ -37,12 +37,13 @@
     <table class="ui celled table">
         <thead>
         <tr>
-            <th>城市</th>
-            <th>日期</th>
+            <th>省/直辖市</th>
+            <th>数据更新日期</th>
+            <th>现有确诊数</th>
             <th>累计确诊数</th>
             <th>累计死亡数</th>
             <th>累计痊愈数</th>
-            <th>更新时间</th>
+            <th>本站更新时间</th>
         </tr>
         </thead>
         <tbody>
@@ -50,6 +51,7 @@
         <tr>
             <td>{{ d.city.province }}</td>
             <td>{{ d.date }}</td>
+            <td>{{ d.now_confirmed }}</td>
             <td>{{ d.confirmed }}</td>
             <td>{{ d.deaths }}</td>
             <td>{{ d.recovered }}</td>

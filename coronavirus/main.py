@@ -4,6 +4,7 @@
 # @File    : schemas.py
 # @Software: PyCharm
 import logging
+import traceback
 
 import httpx
 from typing import List
@@ -18,7 +19,7 @@ from coronavirus.models import City, Data
 
 # 路由
 application = APIRouter()
-logging.basicConfig(level=logging.INFO)   # add this line
+logging.basicConfig(level=logging.INFO)  # add this line
 templates = Jinja2Templates(directory='./coronavirus/templates')
 
 
@@ -112,46 +113,55 @@ async def coronavirus(request: Request, city: str = None, skip: int = 0, limit: 
     })
 
 
-async def bg_task(url: HttpUrl):
-    '''这里注意一个坑，不要在后台任务函数的参数中db：Session = Depends(get_db)这样导入依赖'''
+async def bg_task():
     client = httpx.AsyncClient()
+    # noinspection PyBroadException
     try:
-        city_data = await client.get(url=f"{url}?source=jhu&country_code=CN&timelines=false")
-        if city_data.status_code == 200:
-            await City.all().delete() # 同步数据前先清空原有数据
-            city_locations = city_data.json()['locations']
-            for location in city_locations:
-                city = {
-                    "province": location['province'],
-                    "country": location['country'],
-                    "country_code": "CN",
-                    "country_population": location['country_population']
-                }
-                await crud.create_city(city=schemas.CreateCity(**city))
-
-        coronavirus_data = await client.get(url=f"{url}?source=jhu&country_code=CN&timelines=true")
-        if coronavirus_data.status_code == 200:
+        headers = {
+            "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69 Safari/537.36"
+        }
+        res = await client.get(url='https://c.m.163.com/ug/api/wuhan/app/data/list-total', headers=headers, timeout=10)
+        if res.status_code == 200:
+            cn_data = None
+            await City.all().delete()  # 同步数据前先清空原有数据
             await Data.all().delete()  # 同步数据前先清空原有数据
-            data_locations = coronavirus_data.json()['locations']
-            for data in data_locations:
-                db_city = await crud.get_city_by_name(name=data['province'])
-                for date, confirmed in data['timelines']['confirmed']['timeline'].items():
-                    db_data = {
-                        "date": date.split('T')[0],  # 把'2020-12-31T00:00:00Z' 变成 ‘2020-12-31’
-                        "confirmed": confirmed,
-                        "deaths": data['timelines']['deaths']['timeline'][date],
-                        "recovered": 0
+            for data in res.json()["data"]['areaTree']:
+                if data["name"] == "中国":
+                    cn_data = data['children']
+            if cn_data:
+                for city_data in cn_data:
+                    city = {
+                        "province": city_data['name'],
+                        "country": 'CN',
+                        "country_code": "CN",
+                        "country_population": 14
                     }
-                    # 这个city_id是city表中的主键ID，不是coronavirus_data数据里的ID
-                    await crud.create_city_data(data=schemas.CreateData(**db_data), city_id=db_city.id)
+                    city = await crud.create_city(city=schemas.CreateCity(**city))
+                    confirmed = city_data['total']['confirm']
+                    deaths = city_data['total']['dead']
+                    recovered = city_data['total']['heal']
+                    now_confirmed = confirmed - deaths - recovered
+                    db_data = {
+                        "date": city_data['lastUpdateTime'],
+                        "confirmed": confirmed,
+                        "deaths": deaths,
+                        "recovered": recovered,
+                        "now_confirmed": now_confirmed if now_confirmed >= 0 else 0
+                    }
+                    await crud.create_city_data(data=schemas.CreateData(**db_data), city_id=city.id)
+            else:
+                logging.info('数据获取失败')
+                return
     except Exception:
+        logging.info(traceback.format_exc(limit=30))
         logging.info("后台更新数据出错")
+    else:
+        logging.info("后台更新数据成功")
     finally:
         await client.aclose()
 
 
 @application.get('/sync_coronavirus_data/jhu')
 async def async_coronavirus_data(background_tasks: BackgroundTasks):
-    '''从Johns Hopkins University同步COVID-19数据'''
-    background_tasks.add_task(bg_task, 'https://coronavirus-tracker-api.herokuapp.com/v2/locations')
+    background_tasks.add_task(bg_task,)
     return {"message": "正在后台同步数据..."}

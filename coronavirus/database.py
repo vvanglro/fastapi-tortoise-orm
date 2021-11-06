@@ -5,7 +5,7 @@
 # @Software: PyCharm
 from coronavirus.config import DB_USER, DB_PASSWORD, DB_NAME
 
-DATABASE_URL = f'mysql://{DB_USER}:{DB_PASSWORD}@db:3306/{DB_NAME}?charset=utf8'
+DATABASE_URL = f'mysql://{DB_USER}:{DB_PASSWORD}@db:3306/{DB_NAME}'
 
 TORTOISE_ORM = {
     "connections": {"default": DATABASE_URL},
