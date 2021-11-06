@@ -1,12 +1,21 @@
-# -*- coding: UTF-8 -*-
 """
 @author:wanghao
 @file:chapter04.py
 @time:2021/04/24
 """
-from typing import Optional, List, Union
-from fastapi import APIRouter, status, Form, File, UploadFile, HTTPException
-from pydantic import BaseModel, EmailStr, Field
+from typing import List
+from typing import Optional
+from typing import Union
+
+from fastapi import APIRouter
+from fastapi import File
+from fastapi import Form
+from fastapi import HTTPException
+from fastapi import status
+from fastapi import UploadFile
+from pydantic import BaseModel
+from pydantic import EmailStr
+from pydantic import Field
 
 app04 = APIRouter()
 
@@ -16,9 +25,12 @@ app04 = APIRouter()
 class UserMix(BaseModel):
     username: str
     email: EmailStr   # 用EmailStr 需要 pip install  pydantic[email]
-    mobile: str = Field(default='18812340987', title='手机号', regex="^1[3456789]\d{9}$")
-    address: str = None
-    full_name: Optional[str] = None
+    mobile: str = Field(
+        default='18812340987', title='手机号',
+        regex=r'^1[3456789]\d{9}$',
+    )
+    address: str = ''
+    full_name: Optional[str] = ''
 
 
 # 共有的字段可以写类继承
@@ -32,8 +44,8 @@ class UserOut(UserMix):
 
 
 users = {
-    "user01": {"username": "user01", "password": "123456", "email": "user01@example.com"},
-    "user02": {"username": "user02", "password": "123456", "email": "user02@example.com", "mobile": "15612340987"},
+    'user01': {'username': 'user01', 'password': '123456', 'email': 'user01@example.com'},
+    'user02': {'username': 'user02', 'password': '123456', 'email': 'user02@example.com', 'mobile': '15612340987'},
 }
 
 
@@ -72,39 +84,43 @@ async def r_model_attributes(user: UserIn):
 
 @app04.post('/status_code', status_code=200)
 async def status_code():
-    return {"status_code": 200}
+    return {'status_code': 200}
 
 
 @app04.post('/status_attribute', status_code=status.HTTP_200_OK)
 async def status_attribute():
     print(type(status.HTTP_200_OK))
-    return {"status_code": status.HTTP_200_OK}
-
+    return {'status_code': status.HTTP_200_OK}
 
 
 '''Form Data 表单数据处理'''
 
+
 @app04.post('/login')
 async def login(
         username: str = Form(...),
-        password: str = Form(...)
+        password: str = Form(...),
 ):
     '''
     用Form类需要pip install python-multipart
     Form类的元数据和校验方法类似Body/Query/Path/Cookie
     '''
-    return {"username": username}
+    return {'username': username}
 
 
 '''Request Files 单文件 多文件上传及参数详解'''
 
+
 @app04.post('/file')
-async def file_1(file: bytes = File(...)):  # 如果要上传多个文件 files: List[bytes] = File(...)
+# 如果要上传多个文件 files: List[bytes] = File(...)
+async def file_1(file: bytes = File(...)):
     '''使用File类 文件内容会以bytes的形式读入内存 适合用于上传小文件'''
     return {'file_size': len(file)}
 
+
 @app04.post('/upload_files')
-async def upload_files(files: List[UploadFile] = File(...)):  # 如果要上传单个文件 files: UploadFile = File(...)
+# 如果要上传单个文件 files: UploadFile = File(...)
+async def upload_files(files: List[UploadFile] = File(...)):
     '''
         使用Uploadfile类的优势：
             1. 文件存储在内存中，使用的内容达到阈值后，将被保存在磁盘中
@@ -118,24 +134,24 @@ async def upload_files(files: List[UploadFile] = File(...)):  # 如果要上传�
     for file in files:
         contents = await file.read()
         print(contents)
-    return {"filename": files[0].filename, "content_type": files[0].content_type}
+    return {'filename': files[0].filename, 'content_type': files[0].content_type}
 
 
 '''【见run.py】FastAPI项目的静态文件配置'''
 
 
-
 '''Path Operation Configuration 路径操作配置'''
+
 
 @app04.post(
     '/path_operation_configuration',
     response_model=UserOut,
     # tags=['Path','Operation','Configurarion'],
-    summary= "This is summary",   #api文档里的描述
-    description='This is description',  #api文档里的描述
-    response_description='This is response description',  #api文档里的描述
+    summary='This is summary',  # api文档里的描述
+    description='This is description',  # api文档里的描述
+    response_description='This is response description',  # api文档里的描述
     # description=True,
-    status_code=status.HTTP_200_OK
+    status_code=status.HTTP_200_OK,
 )
 async def path_operation_configuration(user: UserIn):
     '''
@@ -148,10 +164,13 @@ async def path_operation_configuration(user: UserIn):
 
 '''Handing Errors 错误处理'''
 
+
 @app04.get('/http_exception')
 async def http_exception(city: str):
     if city != 'CD':
-        raise HTTPException(status_code=404, detail='city not found', headers={"X-Error":'error'})
-    return {"city":city}
-
-
+        raise HTTPException(
+            status_code=404, detail='city not found', headers={
+                'X-Error': 'error',
+            },
+        )
+    return {'city': city}

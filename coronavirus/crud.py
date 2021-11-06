@@ -1,10 +1,9 @@
-# -*- coding: utf-8 -*-
 # @Time    : 2021/5/13 10:51
 # @Author  : wanghao
 # @File    : schemas.py
 # @Software: PyCharm
-
-from coronavirus import models, schemas
+from coronavirus import models
+from coronavirus import schemas
 
 
 async def get_city(city_id: int):
@@ -35,8 +34,8 @@ async def update_city(city_name: str, city: schemas.CreateCity):
 async def get_data(city: str = None, skip: int = 0, limit: int = 10):
     # 获取数据
     if city:
-        return await models.Data.filter(city__province=city).prefetch_related("city").limit(6)
-    return await models.Data.all().prefetch_related("city").offset(skip).limit(limit)
+        return await models.Data.filter(city__province=city).prefetch_related('city').limit(6)
+    return await models.Data.all().prefetch_related('city').offset(skip).limit(limit)
 
 
 async def create_city_data(data: schemas.CreateData, city_id: int):

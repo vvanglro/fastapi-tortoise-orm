@@ -1,11 +1,13 @@
-
 from fastapi import FastAPI
 from starlette.requests import Request
-from starlette.responses import JSONResponse, HTMLResponse
+from starlette.responses import HTMLResponse
+from starlette.responses import JSONResponse
 
 app = FastAPI()
 
 # 定义异常方法
+
+
 class NormalException(Exception):
     def __init__(self, code: int, message: str):
         self.message = message
@@ -19,12 +21,14 @@ async def unicorn_exception_handler(request: Request, exc: NormalException):
     return JSONResponse(
         status_code=200,
         content={
-            "code": "your code",
-            "message": "your message",
+            'code': 'your code',
+            'message': 'your message',
         },
     )
 
 # 捕获状态码为404的请求
+
+
 @app.exception_handler(404)
 async def handler_not_found(request: Request, exc):
     html = f"""
@@ -32,7 +36,7 @@ async def handler_not_found(request: Request, exc):
         <hr>
         <h3>当前请求的地址：{request.url}</h3>
     """
-    return HTMLResponse(html,status_code=200)
+    return HTMLResponse(html, status_code=200)
 
 
 # 捕获状态码为500的请求
@@ -48,23 +52,25 @@ async def handler_server_error(request: Request, exc):
     return JSONResponse(
         status_code=200,
         content={
-            "message": "服务器异常",
-            "error": str(exc)
+            'message': '服务器异常',
+            'error': str(exc),
         },
     )
 
+
 @app.get('/a')
 async def func():
-    raise NormalException(code=300,message='error')
+    raise NormalException(code=300, message='error')
+
 
 @app.get('/b')
-async def func():
+async def func2():
     '''测试捕获状态码为500请求的'''
-    r = 1/0
+    r = 1 / 0
     return
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     import uvicorn
 
-    uvicorn.run(app='异常捕获:app', host="0.0.0.0", port=8001, reload=True)
+    uvicorn.run(app='异常捕获:app', host='0.0.0.0', port=8001, reload=True)
