@@ -1,0 +1,36 @@
+version: "3.8"
+
+networks:
+  db_network:
+    driver: bridge
+
+services:
+  db:
+    image: mysql:5.7
+    platform: linux/amd64  # m1 mac add the line
+    env_file:
+      - ./.env
+    networks:
+      - db_network
+    volumes:
+      - ./compose/mysql/data:/var/lib/mysql:rw
+    ports:
+      - "3306:3306"
+    restart: always
+    tty: true
+    stdin_open: true
+
+  web:
+    build: .
+    command: /bin/bash -c "aerich upgrade &&  uvicorn run:app --host 0.0.0.0 --port 80 --workers 2 --log-level info"
+    ports:
+      - "7777:80"
+    volumes:
+      - .:/workspace
+    networks:
+      - db_network
+    depends_on:
+      - db
+    restart: always
+    tty: true
+    stdin_open: true
