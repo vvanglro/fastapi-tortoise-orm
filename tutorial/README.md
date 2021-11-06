@@ -1,7 +1,7 @@
 ## FastAPI 框架精讲
 > 整体的介绍 FastAPI，快速上手开发，结合 API 交互文档逐个讲解核心模块的使用
 
-![drf-tutorial](./pic/fastapi-tutorial.png)
+![drf-tutorial](../pic/fastapi-tutorial.png)
 
 体验新一代高性能 Python Web 框架，本课程将从 Hello World 开始引导同学们学习 FastAPI 框架的所有知识点。从框架特性一览，到 ASGI 服务介绍，第三章开始会以全球  COVID-19 感染数据查询为功能场景，依次讲解 FastAPI 的 API 交互文档使用，如何使用 Pydantic 定义和规范数据格式、类型，各种请求参数和验证，Jinja2 模板渲染和 Static 静态文件配置，FastAPI 的响应处理和配置，通过代码示例讲解依赖注入系统的所有知识，数据库配置与 SQLAlchemy 的使用，大型工程应该如何设计目录结构。框架的安全、认证、授权，中间件开发，跨域资源共享的实现，后台任务和测试用例的编写。
 
@@ -33,23 +33,23 @@
 ### 课程效果展示
 
 1.  简易版前端效果
-![drf-tutorial](./pic/preview01.png)
+![drf-tutorial](../pic/preview01.png)
 2.  API交互文档 - **Swagger UI**
-![drf-tutorial](./pic/preview02.png)
+![drf-tutorial](../pic/preview02.png)
 3.  第三章的接口
-![drf-tutorial](./pic/preview03.png)
+![drf-tutorial](../pic/preview03.png)
 4.  第四、五章的接口
-![drf-tutorial](./pic/preview04.png)
+![drf-tutorial](../pic/preview04.png)
 5.  接口的参数、返回的状态码、描述
-![drf-tutorial](./pic/preview05.png)
+![drf-tutorial](../pic/preview05.png)
 6.  接口认证的效果
-![drf-tutorial](./pic/preview06.png)
+![drf-tutorial](../pic/preview06.png)
 7.  第七、八章和`Coronavirus`应用的接口
-![drf-tutorial](./pic/preview07.png)
+![drf-tutorial](../pic/preview07.png)
 8.  城市信息表
-![drf-tutorial](./pic/preview08.png)
+![drf-tutorial](../pic/preview08.png)
 9.  感染数据表
-![drf-tutorial](./pic/preview09.png)
+![drf-tutorial](../pic/preview09.png)
 
 
 
@@ -63,7 +63,7 @@
 
 ### 第二章 FastAPI介绍和项目准备
 
-![drf-tutorial](./pic/chapter02.png)
+![drf-tutorial](../pic/chapter02.png)
 
 #### 2.1 本章导学
 
@@ -105,7 +105,7 @@
 
 ### 第三章 请求参数和验证
 
-![drf-tutorial](./pic/chapter03.png)
+![drf-tutorial](../pic/chapter03.png)
 
 #### 3.1 本章导学
 
@@ -147,7 +147,7 @@
 
 ### 第四章 响应处理和FastAPI配置
 
-![drf-tutorial](./pic/chapter04.png)
+![drf-tutorial](../pic/chapter04.png)
 
 #### 4.1 本章导学
 
@@ -193,7 +193,7 @@ HTTPException 的使用，如何自定义异常处理器；给第六小节开发
 
 ### 第五章 FastAPI的依赖注入系统
 
-![drf-tutorial](./pic/chapter05.png)
+![drf-tutorial](../pic/chapter05.png)
 
 #### 5.1 本章导学
 
@@ -235,7 +235,7 @@ yield 在依赖函数中的作用，讲解数据库连接的案例
 
 ### 第六章 安全、认证和授权
 
-![drf-tutorial](./pic/chapter06.png)
+![drf-tutorial](../pic/chapter06.png)
 
 #### 6.1 本章导学
 
@@ -265,7 +265,7 @@ JSON Web Tokens介绍，安装 python-jose 和 passlib，实现 JWT 认证，用
 
 ### 第七章 FastAPI的数据库操作和多应用的目录结构设计
 
-![drf-tutorial](./pic/chapter07.png)
+![drf-tutorial](../pic/chapter07.png)
 
 #### 7.1 本章导学
 
@@ -307,7 +307,7 @@ FastAPI 项目中 Jinja2 配置，使用 Jinja2 渲染 COVID-19 查询页面，�
 
 ### 第八章 中间件、CORS、后台任务、测试用例
 
-![drf-tutorial](./pic/chapter08.png)
+![drf-tutorial](../pic/chapter08.png)
 
 #### 8.1 本章导学
 
