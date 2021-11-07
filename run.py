@@ -159,4 +159,4 @@ async def close_orm() -> None:  # pylint: disable=W0612
 # )
 
 if __name__ == '__main__':
-    uvicorn.run('run:app', host='0.0.0.0', port=9091, reload=True, debug=True, workers=1)
+    uvicorn.run('run:app', host='0.0.0.0', port=9091, reload=True, debug=True, workers=1, log_config='log-config.json')
