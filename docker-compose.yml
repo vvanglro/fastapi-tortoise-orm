@@ -21,7 +21,7 @@ services:
 
   web:
     build: .
-    command: /bin/bash -c "aerich upgrade &&  uvicorn run:app --host 0.0.0.0 --port 80 --workers 2 --log-level info"
+    command: /bin/bash -c "aerich upgrade &&  uvicorn run:app --host 0.0.0.0 --port 80 --workers 2 --log-level info --log-config log-config.json"
     ports:
       - "7777:80"
     volumes:
