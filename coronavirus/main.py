@@ -3,9 +3,9 @@
 # @File    : schemas.py
 # @Software: PyCharm
 import logging
-import operator
 import time
 import traceback
+from multiprocessing import Manager
 from typing import List
 
 import httpx
@@ -14,7 +14,6 @@ from fastapi import BackgroundTasks
 from fastapi import HTTPException
 from fastapi import Request
 from fastapi.templating import Jinja2Templates
-from pydantic import HttpUrl
 from starlette import status
 
 from coronavirus import crud
@@ -180,7 +179,7 @@ async def bg_task():
         await client.aclose()
 
 
-users: List = []
+users: List = Manager().list()
 
 
 @application.get('/sync_coronavirus_data/jhu')

@@ -17,10 +17,9 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from tortoise import Tortoise
 from tortoise.contrib.fastapi import register_tortoise
 
-from coronavirus import application
+from coronavirus import router
 from coronavirus.config import DEBUG
 from coronavirus.database import DATABASE_URL
-from coronavirus.schemas import MsgResponse
 from tutorial import app03
 from tutorial import app04
 from tutorial import app05
@@ -77,10 +76,7 @@ app.add_middleware(
 )
 
 if not DEBUG:
-    app.include_router(
-        application, prefix='/coronavirus',
-        tags=['新冠病毒疫情跟踪器API'],
-    )
+    app.include_router(router)
 else:
     app.include_router(app03, prefix='/chapter03', tags=['第三章 请求参数和验证'])
     app.include_router(app04, prefix='/chapter04', tags=['第四章 响应处理和FastAPI配置'])
@@ -94,10 +90,7 @@ else:
         app08, prefix='/chapter08',
         tags=['第八章 中间件、CORS、后台任务、测试用例'],
     )
-    app.include_router(
-        application, prefix='/coronavirus',
-        tags=['新冠病毒疫情跟踪器API'],
-    )
+    app.include_router(router)
 
 
 # 定义异常方法
@@ -159,4 +152,4 @@ async def close_orm() -> None:  # pylint: disable=W0612
 # )
 
 if __name__ == '__main__':
-    uvicorn.run('run:app', host='0.0.0.0', port=9091, reload=True, debug=True, workers=1, log_config='log-config.json')
+    uvicorn.run('run:app', host='0.0.0.0', port=9096, reload=True, debug=True, workers=1, log_config='log-config.json')

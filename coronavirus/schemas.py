@@ -39,7 +39,3 @@ class ReadCity(CreateCity):
 
     class Config:
         orm_mode = True
-
-
-class MsgResponse(BaseModel):
-    message: str
