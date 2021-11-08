@@ -2,6 +2,7 @@
 # @Author  : wanghao
 # @File    : schemas.py
 # @Software: PyCharm
+import datetime
 import logging
 import traceback
 from typing import List
@@ -167,13 +168,13 @@ async def bg_task():
                     }
                     await crud.create_city_data(data=schemas.CreateData(**db_data), city_id=city.id)
             else:
-                logging.info('数据获取失败')
+                logging.info(f'{datetime.datetime.now()}数据获取失败')
                 return
     except Exception:
         logging.info(traceback.format_exc(limit=30))
-        logging.info('后台更新数据出错')
+        logging.info(f'{datetime.datetime.now()}后台更新数据出错')
     else:
-        logging.info('后台更新数据成功')
+        logging.info(f'{datetime.datetime.now()}后台更新数据成功')
     finally:
         await client.aclose()
 
