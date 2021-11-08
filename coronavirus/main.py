@@ -3,9 +3,7 @@
 # @File    : schemas.py
 # @Software: PyCharm
 import logging
-import time
 import traceback
-from multiprocessing import Manager
 from typing import List
 
 import httpx
@@ -18,6 +16,7 @@ from starlette import status
 
 from coronavirus import crud
 from coronavirus import schemas
+from coronavirus.cache import cache
 from coronavirus.models import City
 from coronavirus.models import Data
 
@@ -179,20 +178,11 @@ async def bg_task():
         await client.aclose()
 
 
-users: List = Manager().list()
-
-
 @application.get('/sync_coronavirus_data/jhu')
-async def async_coronavirus_data(request: Request, background_tasks: BackgroundTasks):
-    for latest_user in users:
-        latest_user_req_time = latest_user['time']
-        if int(time.time()) - latest_user_req_time >= 3600:
-            users.remove(latest_user)
-    if not users:
-        ip = request.client.host
-        req_time = int(time.time())
-        user = {'user': ip, 'time': req_time}
-        users.append(user)
+async def async_coronavirus_data(background_tasks: BackgroundTasks):
+    user = await cache.get('user')
+    if not user:
+        await cache.set('user', '1', 3600)
         background_tasks.add_task(bg_task)
         return {'message': '正在后台同步数据...'}
     else:
