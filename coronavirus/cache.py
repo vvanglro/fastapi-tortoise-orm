@@ -1,11 +1,8 @@
 # https://github.com/long2ice/fastapi-cache/blob/master/fastapi_cache/backends/inmemory.py
-import asyncio
-import multiprocessing
 import time
 from asyncio import Lock
 from dataclasses import dataclass
 from multiprocessing import Manager
-from typing import Dict
 from typing import Optional
 from typing import Tuple
 
@@ -17,7 +14,7 @@ class Value:
 
 
 class InMemoryBackend:
-    _store: Dict[str, Value] = Manager().dict()
+    _store = Manager().dict()
     _lock = Lock()
 
     @property
@@ -27,7 +24,7 @@ class InMemoryBackend:
     def _get(self, key: str):
         v = self._store.get(key)
         if v:
-            if v.ttl_ts < self._now:
+            if v[1] < self._now:
                 del self._store[key]
             else:
                 return v
@@ -43,11 +40,12 @@ class InMemoryBackend:
         async with self._lock:
             v = self._get(key)
             if v:
-                return v.data
+                return v[0]
 
     async def set(self, key: str, value: str, expire: int = None):
         async with self._lock:
-            self._store[key] = Value(value, self._now + expire or 0)
+            self._store[key] = (value, self._now + expire or 0)
+            return
 
     async def clear(self, namespace: str = None, key: str = None) -> int:
         count = 0
@@ -65,39 +63,41 @@ class InMemoryBackend:
 
 cache = InMemoryBackend()
 
-
-def test(key):
-    r = loop.run_until_complete(cache.set(key, '1', 10))
-    print(r)
-    # await cache.set(key,"1", 10)
-    # await asyncio.sleep(3)
-
-
-def test1(key):
-    r = loop.run_until_complete(cache.get(key))
-    print(r)
-
-
-def main():
-    process_list = []
-
-    worker_proc = multiprocessing.Process(
-        target=test,
-        args=('q',),
-    )
-    worker_proc.start()
-    process_list.append(worker_proc)
-    worker_proc1 = multiprocessing.Process(
-        target=test1,
-        args=('q',),
-    )
-    worker_proc1.start()
-    process_list.append(worker_proc1)
-
-    for process in process_list:
-        process.join()
-
-
-if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    main()
+#
+# def test(key):
+#     r = loop.run_until_complete(cache.set(key, '1', 10))
+#     print(r)
+#     # await cache.set(key,"1", 10)
+#     # await asyncio.sleep(3)
+#
+#
+# def test1(key):
+#     r = loop.run_until_complete(cache.get(key))
+#     print(r)
+#
+#
+# def main():
+#     process_list = []
+#
+#     worker_proc = multiprocessing.Process(
+#         target=test,
+#         args=('q',),
+#     )
+#     worker_proc.start()
+#     process_list.append(worker_proc)
+#     worker_proc1 = multiprocessing.Process(
+#         target=test1,
+#         args=('q',),
+#     )
+#     worker_proc1.start()
+#     process_list.append(worker_proc1)
+#
+#     for process in process_list:
+#         process.join()
+#
+#
+# if __name__ == '__main__':
+#     import multiprocessing
+#     import asyncio
+#     loop = asyncio.get_event_loop()
+#     main()
