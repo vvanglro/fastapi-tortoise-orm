@@ -8,17 +8,32 @@ services:
   db:
     image: mysql:5.7
     platform: linux/amd64  # m1 mac add the line
-    env_file:
-      - ./.env
+    environment:
+      MYSQL_ROOT_PASSWORD:
+      MYSQL_DATABASE:
+      TZ:
     networks:
       - db_network
     volumes:
-      - ./compose/mysql/data:/var/lib/mysql:rw
+      - ./compose/mysql/data:/var/lib/mysql:rw  # 挂载数据库数据, 可读可写  !建议docker-compose build前先创建/compose/mysql/data空文件夹
     ports:
-      - "3306:3306"
+      - "3306:3306"  # 与配置文件保持一致
     restart: always
-    tty: true
-    stdin_open: true
+    tty: true    # 防止docker-compose生成的容器执行脚本命令后立刻退出  如果不加这俩参数 在docker-compose build后直接docker-compose up -d时database.py里识别不了db 如果build后先up 在up -d则可以不加这俩参数也行
+    stdin_open: true  # 防止docker-compose生成的容器执行脚本命令后立刻退出
+
+  redis:
+    image: bitnami/redis
+    environment:
+      REDIS_PASSWORD:
+    ports:
+      - "7000:6379"
+    networks:
+      - db_network
+    volumes:
+      - ./compose/redis/data:/bitnami/redis/data  # 本地权限sudo chmod -R 777 compose/redis/data
+    command: /opt/bitnami/scripts/redis/run.sh --appendonly yes
+    restart: always
 
   web:
     build: .
@@ -26,11 +41,12 @@ services:
     ports:
       - "7777:80"
     volumes:
-      - .:/workspace
+      - .:/workspace # 挂载项目代码
     networks:
       - db_network
     depends_on:
       - db
+      - redis
     restart: always
     tty: true
     stdin_open: true

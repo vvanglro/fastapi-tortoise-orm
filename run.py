@@ -4,6 +4,7 @@
 @time:2021/04/24
 """
 import time
+from multiprocessing import Manager
 
 import uvicorn
 from fastapi import FastAPI
@@ -18,7 +19,8 @@ from tortoise import Tortoise
 from tortoise.contrib.fastapi import register_tortoise
 
 from coronavirus import router
-from coronavirus.config import DEBUG
+from coronavirus.cache import redis_backend
+from coronavirus.config import DEBUG, REDIS_PASSWORD
 from coronavirus.database import DATABASE_URL
 from tutorial import app03
 from tutorial import app04
@@ -124,6 +126,7 @@ async def unicorn_exception_handler(request: Request, exc: NormalException):
 
 @app.on_event('startup')
 async def init_orm() -> None:  # pylint: disable=W0612
+    await redis_backend.connect(url=f"redis://:{REDIS_PASSWORD}@redis:6379")
     await Tortoise.init(db_url=DATABASE_URL, modules={'models': ['coronavirus.models']}, timezone='Asia/Shanghai')
 
 

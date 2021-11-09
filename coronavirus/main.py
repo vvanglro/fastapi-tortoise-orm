@@ -17,7 +17,7 @@ from starlette import status
 
 from coronavirus import crud
 from coronavirus import schemas
-from coronavirus.cache import cache
+from coronavirus.cache import redis_backend
 from coronavirus.models import City
 from coronavirus.models import Data
 
@@ -181,9 +181,9 @@ async def bg_task():
 
 @application.get('/sync_coronavirus_data/jhu')
 async def async_coronavirus_data(background_tasks: BackgroundTasks):
-    user = await cache.get('user')
+    user = await redis_backend.get('user')
     if not user:
-        await cache.set('user', '1', 3600)
+        await redis_backend.set('user', '1', 3600)
         background_tasks.add_task(bg_task)
         return {'message': '正在后台同步数据...'}
     else:

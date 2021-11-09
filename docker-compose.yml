@@ -7,8 +7,10 @@ networks:
 services:
   db:
     image: mysql:5.7
-    env_file:
-      - ./.env  #使用了环境变量
+    environment:
+      MYSQL_ROOT_PASSWORD:
+      MYSQL_DATABASE:
+      TZ:
     networks:
       - db_network
     volumes:
@@ -18,6 +20,19 @@ services:
     restart: always
     tty: true    # 防止docker-compose生成的容器执行脚本命令后立刻退出  如果不加这俩参数 在docker-compose build后直接docker-compose up -d时database.py里识别不了db 如果build后先up 在up -d则可以不加这俩参数也行
     stdin_open: true  # 防止docker-compose生成的容器执行脚本命令后立刻退出
+
+  redis:
+    image: bitnami/redis
+    environment:
+      REDIS_PASSWORD:
+    ports:
+      - "7000:6379"
+    networks:
+      - db_network
+    volumes:
+      - ./compose/redis/data:/bitnami/redis/data  # 本地权限sudo chmod -R 777 compose/redis/data
+    command: /opt/bitnami/scripts/redis/run.sh --appendonly yes
+    restart: always
 
   web:
     build: .
@@ -30,6 +45,7 @@ services:
       - db_network
     depends_on:
       - db
+      - redis
     restart: always
     tty: true
     stdin_open: true
