@@ -168,13 +168,13 @@ async def bg_task():
                     }
                     await crud.create_city_data(data=schemas.CreateData(**db_data), city_id=city.id)
             else:
-                logging.info(f'{datetime.datetime.now()}数据获取失败')
+                logging.info(f'{datetime.datetime.now()}data gain fail')
                 return
     except Exception:
         logging.info(traceback.format_exc(limit=30))
-        logging.info(f'{datetime.datetime.now()}后台更新数据出错')
+        logging.info(f'{datetime.datetime.now()}background update data fail')
     else:
-        logging.info(f'{datetime.datetime.now()}后台更新数据成功')
+        logging.info(f'{datetime.datetime.now()}background update data success')
     finally:
         await client.aclose()
 

@@ -1,8 +1,13 @@
 # https://github.com/long2ice/fastapi-cache/blob/master/fastapi_cache/backends/inmemory.py
+import asyncio
+import multiprocessing
 import time
 from asyncio import Lock
 from dataclasses import dataclass
-from typing import Dict, Optional, Tuple
+from multiprocessing import Manager
+from typing import Dict
+from typing import Optional
+from typing import Tuple
 
 
 @dataclass
@@ -12,7 +17,7 @@ class Value:
 
 
 class InMemoryBackend:
-    _store: Dict[str, Value] = {}
+    _store: Dict[str, Value] = Manager().dict()
     _lock = Lock()
 
     @property
@@ -60,10 +65,39 @@ class InMemoryBackend:
 
 cache = InMemoryBackend()
 
-async def test():
-    print(await cache.get('q'))
+
+def test(key):
+    r = loop.run_until_complete(cache.set(key, '1', 10))
+    print(r)
+    # await cache.set(key,"1", 10)
+    # await asyncio.sleep(3)
+
+
+def test1(key):
+    r = loop.run_until_complete(cache.get(key))
+    print(r)
+
+
+def main():
+    process_list = []
+
+    worker_proc = multiprocessing.Process(
+        target=test,
+        args=('q',),
+    )
+    worker_proc.start()
+    process_list.append(worker_proc)
+    worker_proc1 = multiprocessing.Process(
+        target=test1,
+        args=('q',),
+    )
+    worker_proc1.start()
+    process_list.append(worker_proc1)
+
+    for process in process_list:
+        process.join()
+
 
 if __name__ == '__main__':
-
-    import asyncio
-    asyncio.run(test())
+    loop = asyncio.get_event_loop()
+    main()
