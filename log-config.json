@@ -5,11 +5,12 @@
         "default": {
             "()": "uvicorn.logging.DefaultFormatter",
             "fmt": "%(asctime)s - %(levelname)s - PID:%(process)d - %(message)s",
-            "use_colors": null
+            "use_colors": true
         },
         "access": {
             "()": "uvicorn.logging.AccessFormatter",
-            "fmt": "%(asctime)s - %(levelname)s - PID:%(process)d - %(message)s"
+            "fmt": "%(asctime)s - %(levelname)s - PID:%(process)d - %(message)s",
+            "use_colors": true
         }
     },
     "handlers": {

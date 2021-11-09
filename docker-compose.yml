@@ -26,7 +26,7 @@ services:
     environment:
       REDIS_PASSWORD:
     ports:
-      - "7000:6379"
+      - "7001:6379"
     networks:
       - db_network
     volumes:
