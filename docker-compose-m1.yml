@@ -31,13 +31,13 @@ services:
     networks:
       - db_network
     volumes:
-      - ./compose/redis/data:/bitnami/redis/data  # 本地权限sudo chmod -R 777 compose/redis/data
+      - ./compose/redis/data:/bitnami/redis/data  # 本地权限sudo chown 1001 -R compose/redis/data
     command: /opt/bitnami/scripts/redis/run.sh --appendonly yes
     restart: always
 
   web:
     build: .
-    command: /bin/bash -c "aerich upgrade &&  uvicorn run:app --host 0.0.0.0 --port 80 --workers 2 --log-level info --log-config log-config.json"
+    command: /bin/bash -c "aerich upgrade &&  uvicorn run:app --host 0.0.0.0 --port 80 --workers 5 --log-level info --log-config log-config.json"
     ports:
       - "7777:80"
     volumes:
