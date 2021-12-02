@@ -119,13 +119,16 @@ async def get_data(city: str = None, skip: int = 0, limit: int = 10):
 @application.get('/')
 async def coronavirus(request: Request, city: str = None, skip: int = 0, limit: int = 34):
     # limit 34 默认获取最新的34个省/直辖市
-    data = await crud.get_data(city=city, skip=skip, limit=limit)
-    if not data:
-        data = {}
+    data_list = await crud.get_data(city=city, skip=skip, limit=limit)
+    for data in data_list:
+        data.updated_at = data.updated_at.strftime('%Y-%m-%d %H:%M:%S')
+        data.date = data.date.strftime('%Y-%m-%d %H:%M:%S')
+    if not data_list:
+        data_list = {}
     return templates.TemplateResponse(
         'home.html', {
             'request': request,
-            'data': data,
+            'data': data_list,
             'sync_data_url': '/coronavirus/sync_coronavirus_data/jhu',
         },
     )
