@@ -3,7 +3,7 @@
 <head>
     <title>新冠病毒疫情跟踪器</title>
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', path='/favicon.ico') }}"/>
-    <link rel="stylesheet" href="{{ url_for('static', path='/semantic.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='/semantic.css') }}">
     <script src="{{ url_for('static', path='/jquery-3.5.1/jquery-3.5.1.min.js') }}"></script>
     <script src="{{ url_for('static', path='/semantic.min.js') }}"></script>
     <script>
@@ -49,21 +49,39 @@
         </thead>
         <tbody>
         {% for d in data %}
-        <tr>
-            <td>{{ d.city.province }}</td>
-            <td>{{ d.date }}</td>
-            <td>{{ d.now_confirmed }}</td>
-            <td>{{ d.confirmed }}</td>
-            <td>{{ d.deaths }}</td>
-            <td>{{ d.recovered }}</td>
-            <td>{{ d.updated_at }}</td>
-        </tr>
+            <tr>
+                <td>{{ d.city.province }}</td>
+                <td>{{ d.date }}</td>
+                <td>{{ d.now_confirmed }}</td>
+                <td>{{ d.confirmed }}</td>
+                <td>{{ d.deaths }}</td>
+                <td>{{ d.recovered }}</td>
+                <td>{{ d.updated_at }}</td>
+            </tr>
         {% else %}
             <h2 style="text-align: center">无数据</h2>
         {% endfor %}
         </tbody>
     </table>
-    <hr />
+    <hr/>
 </div>
+<script src="{{ url_for('static', path='/darkmode-js.js') }}"></script>
+<script>
+    const options = {
+        bottom: '64px', // default: '32px'
+        right: '32px', // default: '32px'
+        time: '0.5s', // default: '0.3s'
+        mixColor: '#fff', // default: '#fff'
+        backgroundColor: '#fff',  // default: '#fff'
+        buttonColorDark: '#100f2c',  // default: '#100f2c'
+        buttonColorLight: '#fff', // default: '#fff'
+        saveInCookies: true, // default: true,
+        label: '🌓', // default: ''
+        autoMatchOsTheme: true // default: true
+    }
+
+    const darkmode = new Darkmode(options);
+    darkmode.showWidget();
+</script>
 </body>
 </html>
