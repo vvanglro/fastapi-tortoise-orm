@@ -939,7 +939,7 @@ reference = "aliyun"
 
 [[package]]
 name = "uvicorn"
-version = "0.18.0"
+version = "0.18.1"
 description = "The lightning-fast ASGI server."
 category = "main"
 optional = false
@@ -1002,7 +1002,7 @@ reference = "aliyun"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "d083c36f75115c200e381af3775455151508887176dcda4cf6192ac4f628e059"
+content-hash = "9c338c6109c2c236590d177e3767c6ec537973f0d9a43ab15b8f8d21eae0227a"
 
 [metadata.files]
 aerich = [
@@ -1384,8 +1384,8 @@ urllib3 = [
     {file = "urllib3-1.26.9.tar.gz", hash = "sha256:aabaf16477806a5e1dd19aa41f8c2b7950dd3c746362d7e3223dbe6de6ac448e"},
 ]
 uvicorn = [
-    {file = "uvicorn-0.18.0-py3-none-any.whl", hash = "sha256:ba66bccb012a1662ef0de7d8c5ec416a6dcf5d9f64c274f8df67d2df44a4b0b1"},
-    {file = "uvicorn-0.18.0.tar.gz", hash = "sha256:fde065bc11c05025fbb33f7602826e7520237c45a67ffa040993ae04ad4d7ab3"},
+    {file = "uvicorn-0.18.1-py3-none-any.whl", hash = "sha256:013c4ea0787cc2dc456ef4368e18c01982e6be57903e4d3183218e543eb889b7"},
+    {file = "uvicorn-0.18.1.tar.gz", hash = "sha256:35703e6518105cfe53f16a5a9435db3e2e227d0784f1fd8fbc1214b1fdc108df"},
 ]
 virtualenv = [
     {file = "virtualenv-20.14.1-py2.py3-none-any.whl", hash = "sha256:e617f16e25b42eb4f6e74096b9c9e37713cf10bf30168fb4a739f3fa8f898a3a"},
