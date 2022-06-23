@@ -3,12 +3,12 @@
     "disable_existing_loggers": false,
     "formatters": {
         "default": {
-            "()": "uvicorn.logging.DefaultFormatter",
+            "()": "uvicorn._logging.DefaultFormatter",
             "fmt": "%(asctime)s - %(levelname)s - PID:%(process)d - %(message)s",
             "use_colors": true
         },
         "access": {
-            "()": "uvicorn.logging.AccessFormatter",
+            "()": "uvicorn._logging.AccessFormatter",
             "fmt": "%(asctime)s - %(levelname)s - PID:%(process)d - %(message)s",
             "use_colors": true
         }
